@@ -1,7 +1,8 @@
 import argparse
 import sys
-
+import os
 import GroupMe
+
 
 def testGroupMe():
     parser = argparse.ArgumentParser()
@@ -13,37 +14,42 @@ def testGroupMe():
     parser.add_argument("--analyzeFile", help="Analyze retrieved file of messages", type=str)
     parser.add_argument("--lastMessageId", help="Get last messageId", action="store_true")
 
-
     args = parser.parse_args()
+    if not args.groupName:
+        args.groupName = "Bio/ECE fam"
+    if not args.analyzeFile:
+        args.analyzeFile = "out.json"
+    # if not args.messageToFile:
+        # args.messageToFile = "out.json"
+
     if not args.apiKey:
-        print("Need to specify an apiKey")
-        exit()
+        args.apiKey = "p1zCWcRIMMa4dkD3yeKooWBmlNbX24CNaRouXeXE"
+        # print("Need to specify an apiKey")
+        # exit()
     if args.listGroups:
         print("listGroups: " + str(args.listGroups))
     if args.groupName:
         print("groupName: " + args.groupName)
 
-    myGroupMe = GroupMe.GroupMe(args.apiKey)
+    my_group_me = GroupMe.GroupMe(args.apiKey)
 
     if args.lastMessageId:
-        print("Group message last ID: " + myGroupMe.getLastMessageIdOfGroup(args.groupName))
+        print("Group message last ID: " + my_group_me.getLastMessageIdOfGroup(args.groupName))
     if args.listGroups:
-        print("GroupMe groups:\n" + str(myGroupMe.getGroups()))
+        print("GroupMe groups:\n" + str(my_group_me.getGroups()))
     if args.groupName:
         print("focusing on group: " + args.groupName)
-        print("ID: " + myGroupMe.getGroupIdByName(args.groupName))
+        print("ID: " + my_group_me.getGroupIdByName(args.groupName))
 
     if args.groupName and args.messageToFile:
-        numMessagesToRetrieve = myGroupMe.getGroupMessageLengthByName(args.groupName)
-#        numMessagesToRetrieve = 200
-        myGroupMe.retrieveMessages(args.messageToFile, args.groupName, numMessagesToRetrieve)
+        num_messages_to_retrieve = my_group_me.getGroupMessageLengthByName(args.groupName)
+        my_group_me.retrieveMessages(args.messageToFile, args.groupName, num_messages_to_retrieve)
 
     if args.groupName and args.analyzeFile and os.path.isfile(args.analyzeFile):
-        myGroupMe.analyzeFile(args.analyzeFile)
+        my_group_me.analyzeFile(args.analyzeFile)
 
 
 if __name__ == "__main__":
-
     testGroupMe()
 
 
